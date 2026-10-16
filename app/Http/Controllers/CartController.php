@@ -3,27 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Cart;
 
 class CartController extends Controller
 {
-    public function add(Request $request) {
+public function add(Request $request) {
         $request->validate([
             'product_id' => 'required|integer',
             'qty' => 'required|integer',
         ]);
+        
         $data = $request->all();
+        $product = Product::findOrFail($data['product_id']);
+        $cart = new Cart();
+        $cart->addToCart($product, $data['qty']);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'answer' => 'success',
-                'id' => $data['product_id'],
-                'qty' => $data['qty'],
-            ]);
-        } else {
-            dd($data);
-        }
+        return view('cart.cart-modal');
     }
-    
-    
     
 }

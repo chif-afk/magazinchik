@@ -22,4 +22,9 @@ public function add(Request $request) {
         return view('cart.cart-modal');
     }
     
+    public function show() {
+        return view('cart.cart-modal');
+    }
 }
+
+

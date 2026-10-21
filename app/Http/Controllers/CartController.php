@@ -19,7 +19,7 @@ public function add(Request $request) {
         $cart = new Cart();
         $cart->addToCart($product, $data['qty']);
 
-        return view('cart.cart-modal');
+        return back();
     }
     
     public function show() {

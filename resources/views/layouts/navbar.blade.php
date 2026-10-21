@@ -17,14 +17,9 @@
                 <a class="nav-link" href="#">Гитарное оборудование</a>
             </li>
             <li class="nav-item">
-
-        <button type="button" onclick="getCart(`{{ route('cart.show') }}`)" class="btn btn-primary">
-            Корзина <span class="badge bg-light text-dark">3</span>
-        </button>
-
-
-
-
+                <button type="button" onclick="getCart(`{{ route('cart.show') }}`)" class="btn btn-primary">
+                    Корзина <span class="badge bg-light text-dark">{{ session('cart_qty') ?? 0}}</span>
+                </button>
             </li>
         </ul>
         <form class="form-inline">

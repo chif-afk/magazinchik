@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <script src="{{ asset('assets/front/js/mainmain.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('assets/front/css/main.css') }}">
 

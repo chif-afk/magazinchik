@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <a class="navbar-brand" href="index.html">Shop</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,7 +11,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Гитары</a>
-            </li>
+            </li>   
             <li class="nav-item">
                 <a class="nav-link" href="#">Гитарное оборудование</a>
             </li>

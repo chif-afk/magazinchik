@@ -25,6 +25,12 @@ public function add(Request $request) {
     public function show() {
         return view('cart.cart-modal');
     }
+
+    public function delItem($product_id) {
+        $cart = new Cart();
+        $cart->delItem($product_id);
+        return view('cart.cart-modal');
+    }
 }
 
 

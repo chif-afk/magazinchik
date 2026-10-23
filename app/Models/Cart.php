@@ -35,4 +35,18 @@ class Cart extends Model
             session(['cart_total' => $qty * $product->price]);
         }
     }
+
+    public function delItem($product_id) {
+        if (!session()->has("cart.{$product_id}")) {
+            return false;
+        }
+
+        $qty_minus = session("cart.{$product_id}.qty");
+        $sum_minus = $qty_minus * session("cart.{$product_id}.price");
+
+        session(['cart_qty' => session('cart_qty') - $qty_minus]);
+        session(['cart_total' => session('cart_total') - $sum_minus]);
+        session()->forget("cart.{$product_id}");
+        return true;
+    }
 }

@@ -39,6 +39,14 @@
             </tbody>
         </table>    
     </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary btn-cart">Оформить заказ</button>
+            
+            <button type="button" class="btn btn-danger clear-cart" data-action="{{ route('cart.clear') }}">
+                Очистить корзину
+            </button>
+        </div>
 @else
     <h4>Корзина пустая</h4>
 @endif

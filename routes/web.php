@@ -20,3 +20,4 @@ Route::get('/cart/show', [App\Http\Controllers\CartController::class, 'show'])->
 Route::get('/cart/del_item/{product_id}', [\App\Http\Controllers\CartController::class, 'delItem'])->name('cart.del_item');
 Route::get('/cart/clear', [\App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
 Route::get('/category/{slug}',[\App\Http\Controllers\CategoryController::class, 'show'])->name('categories.show');
+Route::match(['get', 'post'], '/cart/checkout', [\App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');

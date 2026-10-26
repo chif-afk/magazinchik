@@ -11,23 +11,23 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (session('cart') as $item)
-                <tr>
-                    <td>
-                        <a href="{{ route('products.show', ['slug' => $item['slug']]) }}">
-                            <img src="{{ $item['img'] }}" alt="{{ $item['title'] }}">
-                        </a>
-                    </td>
-                    <td><a href="{{ route('products.show', ['slug' => $item['slug']]) }}">{{ $item['title'] }}</a></td>
-                    <td>@price_format($item['price']) руб.</td>
-                    <td>{{ $item['qty'] }}</td>
-                    <td>
-                        <span class="text-danger del-item" data-action="{{ route('cart.del_item', ['product_id' => $item['id']]) }}">
-                            <i class="fas fa-times"></i>
-                        </span>
-                    </td>
-                </tr>
-                @endforeach
+            @foreach (session('cart') as $key => $item)
+            <tr>
+                <td>
+                    <a href="{{ route('products.show', ['slug' => $item['slug']]) }}">
+                        <img src="{{ $item['img'] }}" alt="{{ $item['title'] }}">
+                    </a>
+                </td>
+                <td><a href="{{ route('products.show', ['slug' => $item['slug']]) }}">{{ $item['title'] }}</a></td>
+                <td>@price_format($item['price']) руб.</td>
+                <td>{{ $item['qty'] }}</td>
+                <td>
+                    <span class="text-danger del-item" data-action="{{ route('cart.del_item', ['product_id' => $key]) }}">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </td>
+            </tr>
+            @endforeach
                 <tr>
                     <td colspan="3" align="right">Итого:</td>
                     <td id="modal-cart-qty">{{ session('cart_qty')}}</td>
@@ -41,8 +41,7 @@
     </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary btn-cart">Оформить заказ</button>
-            
+            <a href="{{ route('cart.checkout') }}" class="btn btn-primary btn-cart @if(empty(session('cart'))) d-one @endif">Оформить заказ</a> 
             <button type="button" class="btn btn-danger clear-cart" data-action="{{ route('cart.clear') }}">
                 Очистить корзину
             </button>

@@ -56,7 +56,12 @@ function getCart(action) {
         url: action,
         type: 'get',
         success: function (result) {
-            showCart(result);
+            let now_location = document.location.pathname;
+            if (now_location == '/cart/checkout') {
+                location = '/cart/checkout';
+            } else {
+                showCart(result);
+            }
         },
         error: function() {
             alert('Error');
@@ -69,7 +74,12 @@ function clearCart(action) {
         url: action,
         type: 'get',
         success: function (result) {
-            showCart(result);
+            let now_location = document.location.pathname;
+            if (now_location == '/cart/checkout') {
+                location = 'cart/checkout';
+            } else {
+                showCart(result);
+            }
         },
         error: function() {
             alert('Error');

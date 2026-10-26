@@ -16,6 +16,7 @@ class ProductController extends Controller
     }
 
     public function show(string $slug) {
-        dd($slug);
+        $product = Product::query()->with(['category', 'status'])->where('slug', $slug)->firstOrFail();
+        return view('products.show', compact('product'));
     }
 }

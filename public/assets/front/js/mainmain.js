@@ -33,9 +33,9 @@ $ (function() {
     });
 
            $(document).on('click', '.clear-cart', function() {
-           let action = $(this).data('action');
-           clearCart(action);
-       });
+                let action = $(this).data('action');
+                clearCart(action);
+            });
 })
 
 function showCart(cart) {

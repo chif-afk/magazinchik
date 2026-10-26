@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +23,11 @@ Route::get('/cart/del_item/{product_id}', [\App\Http\Controllers\CartController:
 Route::get('/cart/clear', [\App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
 Route::get('/category/{slug}',[\App\Http\Controllers\CategoryController::class, 'show'])->name('categories.show');
 Route::match(['get', 'post'], '/cart/checkout', [\App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
+Route::get('/register',[UserController::class, 'create'])->name('register.create');
+Route::post('/register', [UserController::class, 'store'])->name('register.store'); 
+// Route::get('/', function() {
+//     return view('user.create');
+// })->name('home');
+Route::get('/login', [UserController::class, 'loginForm'])->name('login.create');
+Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');

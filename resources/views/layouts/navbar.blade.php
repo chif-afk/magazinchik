@@ -11,12 +11,16 @@
             </li>
             @foreach ($categories as $category)
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('categories.show', ['slug' => $category->slug]) }}">{{ $category->title }}</a>
+                    <a class="nav-link" href="{{ route('categories.show', ['slug' => $category->slug]) }}">
+                        {{ $category->name }}
+                    </a>
                 </li> 
             @endforeach  
             @foreach ($categories as $category)
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('categories.show', ['slug' => $category->slug]) }}">{{ $category->title }}</a>
+                    <a class="nav-link" href="{{ route('categories.show', ['slug' => $category->slug]) }}">
+                        {{ $category->name }}
+                    </a>
                 </li>
             @endforeach  
             <li class="nav-item">

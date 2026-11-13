@@ -2,80 +2,122 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Cart;
-use Illuminate\Support\Facades\DB;
-use App\Models\Order;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-public function add(Request $request) {
-    $request->validate([
-        'product_id' => 'required|integer',
-        'qty' => [
-            'required',
-            'integer',
-            'min:1',
-            'regex:/^[1-9][0-9]*$/'
-        ],
-    ]);
-
-    $data = $request->all();
-    $product = Product::findOrFail($data['product_id']);
-    $cart = new Cart();
-    $cart->addToCart($product, $data['qty']);
-
-    return response()->json([
-        'success' => true,
-        'cart_qty' => session('cart_qty', 0),
-        'cart_total' => session('cart_total', 0),
-    ]);
-}
-    
-    public function show() {
-        return view('cart.cart-modal');
-    }
-
-    public function delItem($product_id) {
-        $cart = new Cart();
-        $cart->delItem($product_id);
-        return view('cart.cart-modal');
-    }
-
-    public function clear() {
-        session()->forget('cart');
-        session()->forget('cart_qty');
-        session()->forget('cart_total');
-        return view('cart.cart-modal');
-    }
-
-    public function checkout(Request $request) {
-        if ($request->method() == 'POST') {
-            $request->validate([
-                'name' => 'required',
-                'email' => 'required',
-                'phone' => 'required',
-                'address' => 'required',
-            ]);
-            $data = $request->all();
-
-            DB::transaction(function() use ($data) {
-                $order_data = array_merge([
-                    'qty' => session('cart_qty'),
-                    'total' => session('cart_total'),
-                ], $data);
-                $order = Order::create($order_data);
-                $order->products()->createMany(session('cart'));
-            });
-
-            session()->forget('cart');
-            session()->forget('cart_qty');
-            session()->forget('cart_total');
-            return redirect()->route('cart.checkout')->with('success', 'Заказ оформлен');
+    public function add(Request $request)
+    {
+        $product = Product::findOrFail($request->product_id);
+        $cart = session()->get('cart', []);
+        
+        if (isset($cart[$product->id])) {
+            $cart[$product->id]['qty']++;
+        } else {
+            $cart[$product->id] = [
+                'title' => $product->title,
+                'slug' => $product->slug,
+                'price' => $product->price,
+                'img' => $product->getImage(),
+                'qty' => 1,
+            ];
         }
-        return view('cart.checkout');
+        
+        session()->put('cart', $cart);
+        
+        // Подсчёт общего количества и суммы
+        $cartQty = array_sum(array_column($cart, 'qty'));
+        $cartTotal = array_sum(array_map(function($item) {
+            return $item['price'] * $item['qty'];
+        }, $cart));
+        
+        session(['cart_qty' => $cartQty, 'cart_total' => $cartTotal]);
+        
+        // Для AJAX запросов возвращаем JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'cart_qty' => $cartQty,
+            ]);
+        }
+        
+        return redirect()->back()->with('success', 'Товар добавлен в корзину');
+    }
+
+    public function show()
+    {
+        $cart = session()->get('cart', []);
+        $categories = \App\Models\Category::all();
+        
+        $cartQty = 0;
+        $cartTotal = 0;
+        
+        if (!empty($cart)) {
+            $cartQty = array_sum(array_column($cart, 'qty'));
+            $cartTotal = array_sum(array_map(function($item) {
+                return $item['price'] * $item['qty'];
+            }, $cart));
+        }
+        
+        session(['cart_qty' => $cartQty, 'cart_total' => $cartTotal]);
+        
+        return view('cart.show', compact('cart', 'categories', 'cartQty', 'cartTotal'));
+    }
+
+    public function delItem($product_id)
+    {
+        $cart = session()->get('cart', []);
+        
+        if (isset($cart[$product_id])) {
+            unset($cart[$product_id]);
+            session()->put('cart', $cart);
+        }
+        
+        $cartQty = 0;
+        $cartTotal = 0;
+        
+        if (!empty($cart)) {
+            $cartQty = array_sum(array_column($cart, 'qty'));
+            $cartTotal = array_sum(array_map(function($item) {
+                return $item['price'] * $item['qty'];
+            }, $cart));
+        }
+        
+        session(['cart_qty' => $cartQty, 'cart_total' => $cartTotal]);
+        
+        // Возвращаем HTML модального окна для AJAX
+        return view('cart.cart-modal', compact('cart', 'cartQty', 'cartTotal'))->render();
+    }
+
+    public function clear()
+    {
+        session()->forget('cart');
+        session(['cart_qty' => 0, 'cart_total' => 0]);
+        
+        // Возвращаем HTML модального окна для AJAX
+        return view('cart.cart-modal', ['cart' => [], 'cartQty' => 0, 'cartTotal' => 0])->render();
+    }
+
+    public function checkout(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email',
+                'phone' => 'required|string',
+                'address' => 'required|string',
+            ]);
+            
+            session()->forget('cart');
+            session(['cart_qty' => 0, 'cart_total' => 0]);
+            
+            return redirect()->route('home')->with('success', 'Заказ оформлен!');
+        }
+        
+        $cart = session()->get('cart', []);
+        $categories = \App\Models\Category::all();
+        
+        return view('cart.checkout', compact('cart', 'categories'));
     }
 }
-
-

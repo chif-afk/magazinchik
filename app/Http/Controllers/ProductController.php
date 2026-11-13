@@ -4,15 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
     public function index()
     {
         $title = 'Home Page';
-        $products = Product::with(['category','status'])->orderBy('id', 'desc')->paginate(10);
+                $products = Product::with(['category', 'status'])
+            ->orderBy('id', 'desc')
+            ->paginate(12);
 
-        return view('products.index', compact('title', 'products'));
+        $categories = Category::all();
+
+        return view('products.index', compact('products', 'categories'));
+
     }
 
     public function show(string $slug) {

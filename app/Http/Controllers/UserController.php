@@ -26,8 +26,9 @@ class UserController extends Controller
         ]);
 
         session()->flash('success', 'Регистрация пройдена');
-            Auth::login($user);
-        return redirect()->route('');
+        
+        Auth::login($user);
+        return redirect()->route('home');
     }
 
     public function loginForm() {
@@ -45,12 +46,14 @@ class UserController extends Controller
             'password' => $request->password,
         ])) {
             session()->flash('success', 'Вы вошли');
+
             if (Auth::user()->is_admin) {
                 return redirect()->route('admin.index');
             } else {
-                return redirect()->home();
+                return redirect()->route('home');
             }
         }
+        return redirect()->back()->with('error', 'Невереный логин или пароль');
     }
 
     public function logout() {

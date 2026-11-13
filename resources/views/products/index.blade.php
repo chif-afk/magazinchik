@@ -1,395 +1,82 @@
-@extends('layouts.layout')
-@section('@parent :: {{ $title }}')
-@endsection
+@extends('layouts.layout') 
+
+@section('title', 'Главная')
+
 @section('content')
-    <div class="product-cards mb-5">
-        <div class="col-md-12">
-            @foreach($products as $product)
-                <div class="product-card">
-                    <div class="offer">
-                        @if($product->hit)
-                            <div class="offer-hit">Hit</div>
-                        @endif
-                        @if($product->sale)
-                            <div class="offer-sale">Sale</div>
-                        @endif
-                    </div>
-                    <div class="card-thumb">
-                        <a href="{{ route('products.show', ['slug' => $product->slug]) }}">
-                            <img src="{{ $product->getImage() }}" alt="">
-                        </a>
-                    </div>
-                    <div class="card-caption">
-                        <div class="card-title">
-                            <a href="{{ route('products.show', ['slug' => $product->slug]) }}">{{ $product->title }}</a>
-                        </div>
-                        <div class="card-price text-center">
-                            @if($product->old_price)
-                                <del><small>{{ $product->old_price }} руб.</small></del>
-                            @endif
-                            {{ $product->price }} руб.
-                        </div>
-
-                        <form action="{{ route('cart.add') }}" method="post" class="addtocart">
-                            @csrf
-                            <div class="input-group">
-                                <input type="text" name="qty" value="1" class="form-control">
-                                <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-info btn-block cart-addtocart">
-                                        <i class="fas fa-cart-arrow-down"></i> Купить
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div class="item-status"><i class="{{ $product->status->icon }}"></i> {{ $product->status->title }}</div>
-                    </div>
-                </div><!-- /product-card -->
-            @endforeach
+    @if(session('success'))
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
-    </div><!-- /product-cards -->
-    <div class="col-md-12">
-        <nav aria-label="Page navigation example">
-            {{ $products->links() }}
-        </nav>
+    @endif
+
+    <div class="col-12 mb-4">
+        <h2 class="text-center">Каталог товаров</h2>
     </div>
 
-        <div class="product-card">
-            <div class="offer">
-                <div class="offer-hit">Hit</div>
-            </div>
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/2.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter D6/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    12 626 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="far fa-pause-circle text-danger"></i> Ожидается
-                </div>
-            </div>
-        </div><!-- /product-card -->
+    @forelse($products as $product)
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
 
-        <div class="product-card">
-            <div class="offer">
-                <div class="offer-hit">Hit</div>
-            </div>
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/3.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter D7/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    13 338 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="far fa-pause-circle text-danger"></i> Ожидается
-                </div>
-            </div>
-        </div><!-- /product-card -->
+                @if($product->hit)
+                    <span class="badge badge-danger position-absolute" style="top: 10px; left: 10px; z-index: 10;">Hit</span>
+                @endif
+                @if($product->sale)
+                    <span class="badge badge-warning position-absolute" style="top: 10px; right: 10px; z-index: 10;">Sale</span>
+                @endif
 
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/4.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter D8/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    13 794 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="far fa-pause-circle text-danger"></i> Ожидается
-                </div>
-            </div>
-        </div><!-- /product-card -->
+                <a href="{{ route('products.show', $product->slug) }}" class="d-block text-center p-3">
+                    <img src="{{ $product->getImage() ?? asset('assets/front/img/no-image.png') }}" 
+                         class="img-fluid" 
+                         style="max-height: 200px; object-fit: contain;" 
+                         alt="{{ $product->title }}">
+                </a>
 
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/5.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter D8/TS Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    14 165 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
+                <div class="card-body d-flex flex-column text-center">
+                    <h5 class="card-title">
+                        <a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">
+                            {{ $product->title }}
+                        </a>
+                    </h5>
+                    
+                    <div class="mt-auto">
+                        <p class="card-text mb-2">
+                            @if($product->old_price && $product->old_price > $product->price)
+                                <span class="text-muted"><del>{{ number_format($product->old_price, 0, ',', ' ') }} ₽</del></span><br>
+                            @endif
+                            <span class="text-danger font-weight-bold" style="font-size: 1.2rem;">
+                                {{ number_format($product->price, 0, ',', ' ') }} ₽
+                            </span>
+                        </p>
 
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/6.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter GA30/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    22 059 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
+                        <form action="{{ route('cart.add') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-shopping-cart mr-2"></i>В корзину
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div><!-- /product-card -->
+        </div>
+    @empty
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-box-open fa-3x mb-3"></i>
+                <h4>Товаров пока нет</h4>
+                <p>Загляните позже, мы скоро добавим новые позиции!</p>
+            </div>
+        </div>
+    @endforelse
 
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/7.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter GA45/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    27 075 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
+    {{-- Пагинация (Bootstrap 4 стиль) --}}
+    <div class="col-12 mt-4">
+        {{ $products->links() }}
+    </div>
 
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/8.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER GA6/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    12 654 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/9.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER GA7/N акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    13 367 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/10.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER GA8/BK акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    13 794 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/11.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER GA8/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    13 794 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/12.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter HiLITE-T CD/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    10 175 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/13.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter J15/N акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    16 743 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/14.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER J18/N акустическая гитара. джамбо</a>
-                </div>
-                <div class="card-price text-center">
-                    17 271 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/15.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter LITE-D SP/N Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    10 545 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/16.jpg') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">Crafter MD-42/TR Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    9 006 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-check text-success"></i> В наличии
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-        <div class="product-card">
-            <div class="card-thumb">
-                <a href="product.html"><img src="{{ asset('assets/front/img/no-image.png') }}" alt=""></a>
-            </div>
-            <div class="card-caption">
-                <div class="card-title">
-                    <a href="product.html">CRAFTER TA070/Light Amber Акустическая гитара</a>
-                </div>
-                <div class="card-price text-center">
-                    20 378 руб.
-                </div>
-                <button type="button" class="btn btn-info btn-block card-addtocart">
-                    <i class="fas fa-cart-arrow-down"></i> Купить
-                </button>
-                <div class="item-status">
-                    <i class="fas fa-shipping-fast text-muted"></i> В наличии на складе
-                </div>
-            </div>
-        </div><!-- /product-card -->
-
-    </div><!-- /product-cards -->
-
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-    </nav>
 @endsection

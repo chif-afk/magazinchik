@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('products.show');
@@ -35,4 +36,5 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
     Route::resource('/categories', CategoryController::class, ['as' => 'admin']);
     Route::resource('/tags', TagController::class, ['as' => 'admin']);
     Route::resource('/posts', PostController::class, ['as' => 'admin']);
+    Route::resource('/products', AdminProductController::class, ['as' => 'admin']);
 });

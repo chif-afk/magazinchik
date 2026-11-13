@@ -10,17 +10,18 @@ class CartController extends Controller
     public function add(Request $request)
     {
         $product = Product::findOrFail($request->product_id);
+        $qty = max(1, (int) $request->input('qty', 1));
         $cart = session()->get('cart', []);
-        
+
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['qty']++;
+            $cart[$product->id]['qty'] += $qty;
         } else {
             $cart[$product->id] = [
                 'title' => $product->title,
                 'slug' => $product->slug,
                 'price' => $product->price,
                 'img' => $product->getImage(),
-                'qty' => 1,
+                'qty' => $qty,
             ];
         }
         
@@ -48,21 +49,21 @@ class CartController extends Controller
     public function show()
     {
         $cart = session()->get('cart', []);
-        $categories = \App\Models\Category::all();
-        
+
         $cartQty = 0;
         $cartTotal = 0;
-        
+
         if (!empty($cart)) {
             $cartQty = array_sum(array_column($cart, 'qty'));
             $cartTotal = array_sum(array_map(function($item) {
                 return $item['price'] * $item['qty'];
             }, $cart));
         }
-        
+
         session(['cart_qty' => $cartQty, 'cart_total' => $cartTotal]);
-        
-        return view('cart.show', compact('cart', 'categories', 'cartQty', 'cartTotal'));
+
+        // Модалка корзины запрашивается по AJAX и ожидает HTML-фрагмент
+        return view('cart.cart-modal', compact('cart', 'cartQty', 'cartTotal'))->render();
     }
 
     public function delItem($product_id)
@@ -86,17 +87,25 @@ class CartController extends Controller
         
         session(['cart_qty' => $cartQty, 'cart_total' => $cartTotal]);
         
-        // Возвращаем HTML модального окна для AJAX
-        return view('cart.cart-modal', compact('cart', 'cartQty', 'cartTotal'))->render();
+        // mainmain.js ожидает JSON с HTML модального окна
+        return response()->json([
+            'success' => true,
+            'html' => view('cart.cart-modal', compact('cart', 'cartQty', 'cartTotal'))->render(),
+            'cart_qty' => $cartQty,
+        ]);
     }
 
     public function clear()
     {
         session()->forget('cart');
         session(['cart_qty' => 0, 'cart_total' => 0]);
-        
-        // Возвращаем HTML модального окна для AJAX
-        return view('cart.cart-modal', ['cart' => [], 'cartQty' => 0, 'cartTotal' => 0])->render();
+
+        // mainmain.js ожидает JSON с HTML модального окна
+        return response()->json([
+            'success' => true,
+            'html' => view('cart.cart-modal', ['cart' => [], 'cartQty' => 0, 'cartTotal' => 0])->render(),
+            'cart_qty' => 0,
+        ]);
     }
 
     public function checkout(Request $request)

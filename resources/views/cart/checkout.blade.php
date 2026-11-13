@@ -1,6 +1,5 @@
 @extends('layouts.layout')
-@section('@parent :: {{ $title }}')
-@endsection
+@section('title', 'Оформление заказа')
 @section('content')
     <div class="col-md-12">
         <h1>Оформление заказа</h1>
@@ -8,7 +7,7 @@
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors-all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>

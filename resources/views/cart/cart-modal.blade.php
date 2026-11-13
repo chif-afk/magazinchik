@@ -1,4 +1,9 @@
-@if (!empty((session('cart'))))
+@php
+    $cart = $cart ?? session('cart', []);
+    $cartQty = $cartQty ?? session('cart_qty', 0);
+    $cartTotal = $cartTotal ?? session('cart_total', 0);
+@endphp
+@if (!empty($cart))
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -11,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (session('cart') as $key => $item)
+            @foreach ($cart as $key => $item)
             <tr>
                 <td>
                     <a href="{{ route('products.show', ['slug' => $item['slug']]) }}">
@@ -30,18 +35,18 @@
             @endforeach
                 <tr>
                     <td colspan="3" align="right">Итого:</td>
-                    <td id="modal-cart-qty">{{ session('cart_qty')}}</td>
+                    <td id="modal-cart-qty">{{ $cartQty }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" align="right">На сумму:</td>
-                    <td id="modal-cart-total">@price_format(session('cart_total'))руб.</td>
+                    <td id="modal-cart-total">@price_format($cartTotal)руб.</td>
                 </tr>
             </tbody>
-        </table>    
+        </table>
     </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <a href="{{ route('cart.checkout') }}" class="btn btn-primary btn-cart @if(empty(session('cart'))) d-one @endif">Оформить заказ</a> 
+            <a href="{{ route('cart.checkout') }}" class="btn btn-primary btn-cart">Оформить заказ</a>
             <button type="button" class="btn btn-danger clear-cart" data-action="{{ route('cart.clear') }}">
                 Очистить корзину
             </button>
